@@ -652,11 +652,23 @@ function mlt_main_icon_callback($args) {
 
 // 添加关于部分的回调函数
 function mlt_about_section_callback() {
+    // 获取当前插件版本
+    $current_version = '1.0.0';
+    
+    // 获取GitHub最新版本
+    $github_version = get_github_latest_version();
+    
+    // 准备更新提示信息
+    $update_message = version_compare($github_version, $current_version, '>') 
+        ? '<p class="update-available"><strong>更新：</strong> 发现新版本 ' . esc_html($github_version) . '，请前往 <a href="https://github.com/znc15/TransForZibllTheme/releases/" target="_blank">GitHub</a> 下载</p>'
+        : '<p class="update-current"><strong>更新：</strong> 当前已是最新版本</p>';
     ?>
     <div class="about-section">
-        <p><strong>版本号：</strong> 1.0.0</p>
+        <p><strong>版本号：</strong> <?php echo esc_html($current_version); ?></p>
         <p><strong>作者：</strong> <a href="https://www.LittleSheep.cc" target="_blank">LittleSheep</a></p>
-        <p><strong>引用：</strong> 本插件使用了 <a href="https://github.com/translate-tools/core" target="_blank">translate.js</a> 提供的翻译功能</p>
+        <p><strong>引用：</strong> 本插件使用了 <a href="https://github.com/xnx3/translate" target="_blank">translate.js</a> 提供的翻译功能</p>
+        <p><strong>基于：</strong> https://www.zibll.com/forum-post/29011.html 修改而成</p>
+        <?php echo wp_kses_post($update_message); ?>
     </div>
 
     <style>
@@ -678,6 +690,42 @@ function mlt_about_section_callback() {
         color: #135e96;
         text-decoration: underline;
     }
+    .update-available {
+        color: #d63638 !important;
+    }
+    .update-current {
+        color: #00a32a !important;
+    }
     </style>
     <?php
+}
+
+// 获取GitHub最新版本号
+function get_github_latest_version() {
+    $cache_key = 'mlt_github_version';
+    $cached_version = get_transient($cache_key);
+    
+    if (false !== $cached_version) {
+        return $cached_version;
+    }
+    
+    $response = wp_remote_get('https://api.github.com/repos/znc15/TransForZibllTheme/releases/latest');
+    
+    if (is_wp_error($response)) {
+        return '1.0.0'; // 如果请求失败，返回当前版本
+    }
+    
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body);
+    
+    if (empty($data->tag_name)) {
+        return '1.0.0';
+    }
+    
+    $version = ltrim($data->tag_name, 'v');
+    
+    // 缓存版本号12小时
+    set_transient($cache_key, $version, 12 * HOUR_IN_SECONDS);
+    
+    return $version;
 }
