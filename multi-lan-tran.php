@@ -30,127 +30,10 @@ add_action('admin_menu', 'mlt_add_admin_menu');
 function mlt_settings_init() {
     register_setting('mlt_options', 'mlt_settings');
 
-    add_settings_section(
-        'mlt_section',
-        '图标设置',
-        'mlt_section_callback',
-        'multi-language-translate'
-    );
-
-    // 添加语言开关设置部分
-    add_settings_section(
-        'mlt_language_section',
-        '语言设置',
-        'mlt_language_section_callback',
-        'multi-language-translate'
-    );
-
-    // 添加语言开关选项
-    add_settings_field(
-        'enable_chinese', 
-        '启用中文', 
-        'mlt_checkbox_field_callback',
-        'multi-language-translate',
-        'mlt_language_section',
-        array('label_for' => 'enable_chinese')
-    );
-
-    add_settings_field(
-        'enable_english', 
-        '启用英语', 
-        'mlt_checkbox_field_callback',
-        'multi-language-translate',
-        'mlt_language_section',
-        array('label_for' => 'enable_english')
-    );
-
-    add_settings_field(
-        'enable_japanese', 
-        '启用日语', 
-        'mlt_checkbox_field_callback',
-        'multi-language-translate',
-        'mlt_language_section',
-        array('label_for' => 'enable_japanese')
-    );
-
-    add_settings_field(
-        'enable_korean', 
-        '启用韩语', 
-        'mlt_checkbox_field_callback',
-        'multi-language-translate',
-        'mlt_language_section',
-        array('label_for' => 'enable_korean')
-    );
-
-    add_settings_field(
-        'enable_vietnamese', 
-        '启用越南语', 
-        'mlt_checkbox_field_callback',
-        'multi-language-translate',
-        'mlt_language_section',
-        array('label_for' => 'enable_vietnamese')
-    );
-
-    // 添加设置字段
-    add_settings_field(
-        'main_icon', 
-        '主图标SVG路径', 
-        'mlt_text_field_callback',
-        'multi-language-translate',
-        'mlt_section',
-        array('label_for' => 'main_icon')
-    );
-
-    // 添加中文图标设置
-    add_settings_field(
-        'chinese_icon', 
-        '中文图标SVG路径', 
-        'mlt_text_field_callback',
-        'multi-language-translate',
-        'mlt_section',
-        array('label_for' => 'chinese_icon')
-    );
-
-    add_settings_field(
-        'english_icon', 
-        '英语图标SVG路径', 
-        'mlt_text_field_callback',
-        'multi-language-translate',
-        'mlt_section',
-        array('label_for' => 'english_icon')
-    );
-
-    add_settings_field(
-        'japanese_icon', 
-        '日语图标SVG路径', 
-        'mlt_text_field_callback',
-        'multi-language-translate',
-        'mlt_section',
-        array('label_for' => 'japanese_icon')
-    );
-
-    add_settings_field(
-        'korean_icon', 
-        '韩语图标SVG路径', 
-        'mlt_text_field_callback',
-        'multi-language-translate',
-        'mlt_section',
-        array('label_for' => 'korean_icon')
-    );
-
-    add_settings_field(
-        'vietnamese_icon', 
-        '越南语图标SVG路径', 
-        'mlt_text_field_callback',
-        'multi-language-translate',
-        'mlt_section',
-        array('label_for' => 'vietnamese_icon')
-    );
-
-    // 添加JS设置部分
+    // 将"JS设置"改为"插件设置"
     add_settings_section(
         'mlt_js_section',
-        'JS设置',
+        '插件设置',
         'mlt_js_section_callback',
         'multi-language-translate'
     );
@@ -168,24 +51,55 @@ function mlt_settings_init() {
         )
     );
 
-    // 添加默认语言设置
+    // 修改默认语言设置为文本输入
     add_settings_field(
         'default_language', 
-        '默认语言', 
-        'mlt_select_field_callback',
+        '默认语言代码', 
+        'mlt_text_field_callback',
         'multi-language-translate',
         'mlt_js_section',
         array(
             'label_for' => 'default_language',
-            'options' => array(
-                'chinese_simplified' => '简体中文',
-                'english' => '英语',
-                'japanese' => '日语',
-                'korean' => '韩语',
-                'vietnamese' => '越南语'
-            ),
-            'description' => '设置网站的默认语言'
+            'description' => '设置网站的默认语言代码，例如：chinese_simplified、english、japanese、korean、vietnamese'
         )
+    );
+
+    // 添加主图标设置
+    add_settings_field(
+        'main_icon',
+        '主图标设置',
+        'mlt_main_icon_callback',
+        'multi-language-translate',
+        'mlt_js_section',
+        array(
+            'label_for' => 'main_icon',
+            'description' => '设置语言切换按钮的主图标'
+        )
+    );
+
+    // 添加自定义语言设置部分
+    add_settings_section(
+        'mlt_custom_languages_section',
+        '自定义语言',
+        'mlt_custom_languages_section_callback',
+        'multi-language-translate'
+    );
+
+    // 添加自定义语言列表字段
+    add_settings_field(
+        'custom_languages',
+        '自定义语言列表',
+        'mlt_custom_languages_callback',
+        'multi-language-translate',
+        'mlt_custom_languages_section'
+    );
+
+    // 添加关于部分
+    add_settings_section(
+        'mlt_about_section',
+        '关于',
+        'mlt_about_section_callback',
+        'multi-language-translate'
     );
 }
 add_action('admin_init', 'mlt_settings_init');
@@ -234,26 +148,6 @@ function mlt_checkbox_field_callback($args) {
            <?php checked(1, $checked); ?>
     >
     <?php
-}
-
-// 添加下拉选择框回调函数
-function mlt_select_field_callback($args) {
-    $options = get_option('mlt_settings');
-    $value = isset($options[$args['label_for']]) ? $options[$args['label_for']] : 'chinese_simplified';
-    ?>
-    <select 
-        id="<?php echo esc_attr($args['label_for']); ?>"
-        name="mlt_settings[<?php echo esc_attr($args['label_for']); ?>]">
-        <?php foreach ($args['options'] as $key => $label) : ?>
-            <option value="<?php echo esc_attr($key); ?>" <?php selected($value, $key); ?>>
-                <?php echo esc_html($label); ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
-    <?php
-    if (isset($args['description'])) {
-        echo '<p class="description">' . esc_html($args['description']) . '</p>';
-    }
 }
 
 // 设置页面
@@ -385,6 +279,20 @@ function custom_modify_radius_button($original_content, $user_id) {
         </a>';
     }
     
+    // 添加自定义语言选项
+    if (isset($options['custom_languages']) && is_array($options['custom_languages'])) {
+        foreach ($options['custom_languages'] as $language) {
+            if (!empty($language['name']) && !empty($language['code']) && !empty($language['icon'])) {
+                $new_button .= '<a rel="nofollow" class="btn-newadd" href="javascript:translate.changeLanguage(\'' . esc_js($language['code']) . '\');" rel="external nofollow">
+                    <icon class="c-purple">
+                        <object data="' . esc_url($language['icon']) . '" type="image/svg+xml" class="icon" width="20" height="20"></object>
+                    </icon>
+                    <text class="ignore">' . esc_html($language['name']) . '</text>
+                </a>';
+            }
+        }
+    }
+    
     $new_button .= '</div></span>';
     
     return $original_content . $new_button;
@@ -399,20 +307,36 @@ function mlt_activate() {
     $plugin_dir = 'Trans';
     
     $default_settings = array(
-        'main_icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/main.svg',
-        'chinese_icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/chinese.svg',
-        'english_icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/english.svg',
-        'japanese_icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/japanese.svg',
-        'korean_icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/korean.svg',
-        'vietnamese_icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/vietnamese.svg',
-        // 默认启用所有语言
-        'enable_chinese' => 1,
-        'enable_english' => 1,
-        'enable_japanese' => 1,
-        'enable_korean' => 1,
-        'enable_vietnamese' => 1,
         'js_cdn' => 'https://cdn.staticfile.net/translate.js/3.12.0/translate.js',
-        'default_language' => 'chinese_simplified'
+        'default_language' => 'chinese_simplified', // 默认语言代码
+        'main_icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/translate.svg',
+        'custom_languages' => array(
+            array(
+                'name' => '简体中文',
+                'code' => 'chinese_simplified',
+                'icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/chinese.svg'
+            ),
+            array(
+                'name' => 'English',
+                'code' => 'english',
+                'icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/english.svg'
+            ),
+            array(
+                'name' => '日本語',
+                'code' => 'japanese',
+                'icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/japanese.svg'
+            ),
+            array(
+                'name' => '한국어',
+                'code' => 'korean',
+                'icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/korean.svg'
+            ),
+            array(
+                'name' => 'Việt Nam',
+                'code' => 'vietnamese',
+                'icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/vietnamese.svg'
+            )
+        )
     );
 
     if ($existing_settings === false) {
@@ -430,3 +354,330 @@ function mlt_deactivate() {
     // delete_option('mlt_settings');
 }
 register_deactivation_hook(__FILE__, 'mlt_deactivate');
+
+// 自定义语言设置说明回调
+function mlt_custom_languages_section_callback() {
+    echo '<p>在这里添加自定义语言及其对应的SVG图标</p>';
+}
+
+// 自定义语言字段回调函数
+function mlt_custom_languages_callback() {
+    $options = get_option('mlt_settings');
+    $custom_languages = isset($options['custom_languages']) ? $options['custom_languages'] : array();
+    wp_enqueue_media(); // 加载媒体上传相关脚本
+    ?>
+    <div id="custom-languages-container">
+        <?php foreach ($custom_languages as $index => $language): ?>
+        <div class="custom-language-item">
+            <div class="language-field">
+                <label>自定义语言:</label>
+                <input type="text" 
+                       class="regular-text"
+                       name="mlt_settings[custom_languages][<?php echo $index; ?>][name]" 
+                       value="<?php echo esc_attr($language['name']); ?>" 
+                       placeholder="例如: 简体中文、English、日本語、한국어、Việt Nam"
+                >
+            </div>
+            <div class="language-field">
+                <label>语言代码:</label>
+                <input type="text" 
+                       class="regular-text"
+                       name="mlt_settings[custom_languages][<?php echo $index; ?>][code]" 
+                       value="<?php echo esc_attr($language['code']); ?>" 
+                       placeholder="例如: chinese_simplified、english、japanese、korean、vietnamese"
+                >
+                <p class="description">请输入translate.js支持的语言代码</p>
+            </div>
+            <div class="language-field svg-upload-field">
+                <label>SVG图标:</label>
+                <div class="svg-input-group">
+                    <input type="text" 
+                           class="regular-text svg-url-input"
+                           name="mlt_settings[custom_languages][<?php echo $index; ?>][icon]" 
+                           value="<?php echo esc_attr($language['icon']); ?>" 
+                           placeholder="SVG图标URL"
+                    >
+                    <button type="button" class="button upload-svg-button">选择SVG</button>
+                    <div class="svg-preview">
+                        <?php if (!empty($language['icon'])): ?>
+                        <img src="<?php echo esc_url($language['icon']); ?>" alt="SVG预览">
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="button button-link-delete remove-language">删除此语言</button>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <button type="button" class="button button-primary" id="add-custom-language">添加新语言</button>
+
+    <script>
+    jQuery(document).ready(function($) {
+        var container = $('#custom-languages-container');
+        var index = <?php echo count($custom_languages); ?>;
+
+        // 添加新语言的模板
+        function getTemplate(index) {
+            return `
+                <div class="custom-language-item">
+                    <div class="language-field">
+                        <label>自定义语言:</label>
+                        <input type="text" 
+                               class="regular-text"
+                               name="mlt_settings[custom_languages][${index}][name]" 
+                               placeholder="例如: 简体中文、English、日本語、한국어、Việt Nam">
+                    </div>
+                    <div class="language-field">
+                        <label>语言代码:</label>
+                        <input type="text" 
+                               class="regular-text"
+                               name="mlt_settings[custom_languages][${index}][code]" 
+                               placeholder="例如: chinese_simplified、english、japanese、korean、vietnamese">
+                        <p class="description">请输入translate.js支持的语言代码</p>
+                    </div>
+                    <div class="language-field svg-upload-field">
+                        <label>SVG图标:</label>
+                        <div class="svg-input-group">
+                            <input type="text" 
+                                   class="regular-text svg-url-input"
+                                   name="mlt_settings[custom_languages][${index}][icon]" 
+                                   placeholder="SVG图标URL">
+                            <button type="button" class="button upload-svg-button">选择SVG</button>
+                            <div class="svg-preview"></div>
+                        </div>
+                    </div>
+                    <button type="button" class="button button-link-delete remove-language">删除此语言</button>
+                </div>
+            `;
+        }
+
+        // 添加新语言
+        $('#add-custom-language').click(function() {
+            container.append(getTemplate(index));
+            index++;
+        });
+
+        // 删除语言
+        $(document).on('click', '.remove-language', function() {
+            $(this).closest('.custom-language-item').slideUp(300, function() {
+                $(this).remove();
+            });
+        });
+
+        // SVG上传功能
+        $(document).on('click', '.upload-svg-button', function(e) {
+            e.preventDefault();
+            var button = $(this);
+            var urlInput = button.siblings('.svg-url-input');
+            var previewDiv = button.siblings('.svg-preview');
+
+            var frame = wp.media({
+                title: '选择或上传SVG图标',
+                button: {
+                    text: '使用此图标'
+                },
+                multiple: false
+            });
+
+            frame.on('select', function() {
+                var attachment = frame.state().get('selection').first().toJSON();
+                urlInput.val(attachment.url);
+                previewDiv.html('<img src="' + attachment.url + '" alt="SVG预览">');
+            });
+
+            frame.open();
+        });
+    });
+    </script>
+
+    <style>
+    .custom-language-item {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .language-field {
+        margin-bottom: 15px;
+    }
+
+    .language-field label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .language-field input[type="text"] {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .svg-upload-field {
+        margin-bottom: 15px;
+    }
+
+    .svg-input-group {
+        margin-top: 5px;
+    }
+
+    .svg-input-group input {
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 10px;
+    }
+
+    .svg-preview {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .svg-preview img {
+        max-width: 50px;
+        height: auto;
+        border: 1px solid #ddd;
+        padding: 5px;
+        border-radius: 4px;
+    }
+
+    .description {
+        color: #666;
+        font-style: italic;
+        margin: 5px 0 0;
+        font-size: 13px;
+    }
+
+    #add-custom-language {
+        margin-top: 10px;
+    }
+
+    .remove-language {
+        margin-top: 10px;
+    }
+
+    .button-link-delete {
+        color: #dc3232;
+    }
+
+    .button-link-delete:hover {
+        color: #dc3232;
+        border-color: #dc3232;
+    }
+    </style>
+    <?php
+}
+
+// 添加主图标设置回调函数
+function mlt_main_icon_callback($args) {
+    $options = get_option('mlt_settings');
+    $main_icon = isset($options[$args['label_for']]) ? $options[$args['label_for']] : '';
+    wp_enqueue_media();
+    ?>
+    <div class="main-icon-field">
+        <div class="svg-input-group">
+            <input type="text" 
+                   id="<?php echo esc_attr($args['label_for']); ?>"
+                   class="regular-text svg-url-input"
+                   name="mlt_settings[<?php echo esc_attr($args['label_for']); ?>]"
+                   value="<?php echo esc_attr($main_icon); ?>"
+                   placeholder="SVG图标URL"
+            >
+            <button type="button" class="button upload-svg-button">选择SVG</button>
+            <div class="svg-preview">
+                <?php if (!empty($main_icon)): ?>
+                <img src="<?php echo esc_url($main_icon); ?>" alt="SVG预览">
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php if (isset($args['description'])): ?>
+            <p class="description"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
+    </div>
+
+    <script>
+    jQuery(document).ready(function($) {
+        // 主图标上传功能
+        $('.main-icon-field .upload-svg-button').click(function(e) {
+            e.preventDefault();
+            var button = $(this);
+            var urlInput = button.siblings('.svg-url-input');
+            var previewDiv = button.siblings('.svg-preview');
+
+            var frame = wp.media({
+                title: '选择或上传SVG主图标',
+                button: {
+                    text: '使用此图标'
+                },
+                multiple: false
+            });
+
+            frame.on('select', function() {
+                var attachment = frame.state().get('selection').first().toJSON();
+                urlInput.val(attachment.url);
+                previewDiv.html('<img src="' + attachment.url + '" alt="SVG预览">');
+            });
+
+            frame.open();
+        });
+    });
+    </script>
+
+    <style>
+    .main-icon-field {
+        margin-bottom: 15px;
+    }
+    .main-icon-field .svg-input-group {
+        margin-top: 5px;
+    }
+    .main-icon-field .svg-url-input {
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 10px;
+    }
+    .main-icon-field .svg-preview {
+        margin-top: 10px;
+    }
+    .main-icon-field .svg-preview img {
+        max-width: 50px;
+        height: auto;
+        border: 1px solid #ddd;
+        padding: 5px;
+        border-radius: 4px;
+    }
+    </style>
+    <?php
+}
+
+// 添加关于部分的回调函数
+function mlt_about_section_callback() {
+    ?>
+    <div class="about-section">
+        <p><strong>版本号：</strong> 1.0.0</p>
+        <p><strong>作者：</strong> <a href="https://www.LittleSheep.cc" target="_blank">LittleSheep</a></p>
+        <p><strong>引用：</strong> 本插件使用了 <a href="https://github.com/translate-tools/core" target="_blank">translate.js</a> 提供的翻译功能</p>
+    </div>
+
+    <style>
+    .about-section {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .about-section p {
+        margin: 10px 0;
+        color: #666;
+    }
+    .about-section a {
+        color: #2271b1;
+        text-decoration: none;
+    }
+    .about-section a:hover {
+        color: #135e96;
+        text-decoration: underline;
+    }
+    </style>
+    <?php
+}
