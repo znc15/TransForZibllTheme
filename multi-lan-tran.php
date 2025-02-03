@@ -3,10 +3,10 @@
 Plugin Name: 子比自动汉化插件
 Plugin URI: https://www.LittleSheep.cc
 Description: 一个适用于子比主题的简单的多语言翻译插件
-Version: 1.0.0
+Version: 1.0.1
 Author: LittleSheep
 Author URI: https://www.LittleSheep.cc
-License: GPL2
+License: GPLV2
 */
 
 // 防止直接访问
@@ -652,7 +652,7 @@ function mlt_main_icon_callback($args) {
 // 添加关于部分的回调函数
 function mlt_about_section_callback() {
     // 获取当前插件版本
-    $current_version = '1.0.0';
+    $current_version = '1.0.1';
     
     // 获取GitHub最新版本
     $github_version = get_github_latest_version();
@@ -711,14 +711,14 @@ function get_github_latest_version() {
     $response = wp_remote_get('https://api.github.com/repos/znc15/TransForZibllTheme/releases/latest');
     
     if (is_wp_error($response)) {
-        return '1.0.0'; // 如果请求失败，返回当前版本
+        return '1.0.1'; // 如果请求失败，返回当前版本
     }
     
     $body = wp_remote_retrieve_body($response);
     $data = json_decode($body);
     
     if (empty($data->tag_name)) {
-        return '1.0.0';
+        return '1.0.1';
     }
     
     $version = ltrim($data->tag_name, 'v');
