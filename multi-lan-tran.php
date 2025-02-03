@@ -2,7 +2,7 @@
 /*
 Plugin Name: 子比自动汉化插件
 Plugin URI: https://www.LittleSheep.cc
-Description: 一个适用于子比主题的简单的多语言翻译插件,支持简体中文、英语、日语、韩语、越南语
+Description: 一个适用于子比主题的简单的多语言翻译插件
 Version: 1.0.0
 Author: LittleSheep
 Author URI: https://www.LittleSheep.cc
@@ -325,16 +325,6 @@ function mlt_activate() {
                 'name' => '日本語',
                 'code' => 'japanese',
                 'icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/japanese.svg'
-            ),
-            array(
-                'name' => '한국어',
-                'code' => 'korean',
-                'icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/korean.svg'
-            ),
-            array(
-                'name' => 'Việt Nam',
-                'code' => 'vietnamese',
-                'icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/vietnamese.svg'
             )
         )
     );
@@ -572,7 +562,15 @@ function mlt_custom_languages_callback() {
 // 添加主图标设置回调函数
 function mlt_main_icon_callback($args) {
     $options = get_option('mlt_settings');
-    $main_icon = isset($options[$args['label_for']]) ? $options[$args['label_for']] : '';
+    // 获取网站URL和插件目录
+    $site_url = get_site_url();
+    $default_icon = $site_url . '/wp-content/plugins/Trans/assets/svg/main.svg';
+    
+    // 如果没有设置值，使用默认图标
+    $main_icon = isset($options[$args['label_for']]) && !empty($options[$args['label_for']]) 
+        ? $options[$args['label_for']] 
+        : $default_icon;
+    
     wp_enqueue_media();
     ?>
     <div class="main-icon-field">
@@ -582,7 +580,7 @@ function mlt_main_icon_callback($args) {
                    class="regular-text svg-url-input"
                    name="mlt_settings[<?php echo esc_attr($args['label_for']); ?>]"
                    value="<?php echo esc_attr($main_icon); ?>"
-                   placeholder="SVG图标URL"
+                   placeholder="<?php echo esc_attr($default_icon); ?>"
             >
             <button type="button" class="button upload-svg-button">选择SVG</button>
             <div class="svg-preview">
@@ -594,6 +592,7 @@ function mlt_main_icon_callback($args) {
         <?php if (isset($args['description'])): ?>
             <p class="description"><?php echo esc_html($args['description']); ?></p>
         <?php endif; ?>
+        <p class="description">默认图标路径：<?php echo esc_html($default_icon); ?></p>
     </div>
 
     <script>
