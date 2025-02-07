@@ -1,0 +1,320 @@
+/* 管理界面通用样式 */
+.wrap {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.form-table {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.form-table:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.form-table th {
+    padding: 25px;
+    color: #1d2327;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-table td {
+    padding: 20px 25px;
+}
+
+h2 {
+    color: #1d2327;
+    font-size: 1.6em;
+    margin: 1.8em 0 1.2em;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f1;
+    font-weight: 500;
+}
+
+.regular-text {
+    width: 100%;
+    max-width: 450px;
+    padding: 12px;
+    border: 1px solid #dcdcde;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.regular-text:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+.regular-text:hover {
+    border-color: #2271b1;
+}
+
+.description {
+    color: #646970;
+    font-style: italic;
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.submit {
+    margin-top: 25px;
+}
+
+/* JS CDN字段样式 */
+.js-cdn-field {
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.js-cdn-field input[type="text"] {
+    margin-bottom: 8px;
+    flex: 1;
+}
+
+/* 按钮通用样式 */
+.button {
+    padding: 8px 16px;
+    height: auto;
+    line-height: 1.4;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 4px;
+}
+
+.button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.button-primary {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+}
+
+.button-primary:hover {
+    background: #135e96;
+    border-color: #135e96;
+}
+
+/* 关于部分样式 */
+.about-section {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    margin: 25px 0;
+    transition: all 0.3s ease;
+}
+
+.about-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.about-section p {
+    margin: 12px 0;
+    line-height: 1.6;
+    color: #646970;
+}
+
+.about-section a {
+    color: #2271b1;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.about-section a:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+/* 前端翻译按钮样式 */
+.ignore {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ignore:hover {
+    color: var(--theme-color);
+    transform: translateY(-1px);
+}
+
+#translate {
+    display: none;
+}
+
+/* 表单分组样式 */
+.form-group {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #1d2327;
+}
+
+/* 状态消息样式 */
+.notice {
+    margin: 20px 0;
+    padding: 12px;
+    border-radius: 6px;
+    border-left-width: 4px;
+}
+
+.notice p {
+    margin: 0.5em 0;
+    padding: 2px;
+}
+
+.notice-success {
+    border-left-color: #00a32a;
+    background: #f0f6ec;
+}
+
+.notice-error {
+    border-left-color: #d63638;
+    background: #fcf0f1;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 782px) {
+    .form-table th {
+        padding: 20px;
+    }
+    
+    .form-table td {
+        padding: 15px 20px;
+    }
+    
+    .regular-text {
+        max-width: 100%;
+    }
+    
+    .js-cdn-field {
+        flex-direction: column;
+    }
+    
+    .button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.custom-language-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.language-field {
+    margin-bottom: 15px;
+}
+
+.language-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.language-field input[type="text"] {
+    width: 100%;
+    max-width: 400px;
+}
+
+.svg-upload-field {
+    margin-bottom: 15px;
+}
+
+.svg-input-group {
+    margin-top: 5px;
+}
+
+.svg-input-group input {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 10px;
+}
+
+.svg-preview {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.svg-preview img {
+    max-width: 50px;
+    height: auto;
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+#add-custom-language {
+    margin-top: 10px;
+}
+
+.remove-language {
+    margin-top: 10px;
+}
+
+.button-link-delete {
+    color: #dc3232;
+}
+
+.button-link-delete:hover {
+    color: #dc3232;
+    border-color: #dc3232;
+}
+
+.main-icon-field {
+    margin-bottom: 15px;
+}
+
+.main-icon-field .svg-input-group {
+    margin-top: 5px;
+}
+
+.main-icon-field .svg-url-input {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 10px;
+}
+
+.main-icon-field .svg-preview {
+    margin-top: 10px;
+}
+
+.main-icon-field .svg-preview img {
+    max-width: 50px;
+    height: auto;
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 4px;
+}

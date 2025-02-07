@@ -1,0 +1,116 @@
+.updates-section {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+.update-item {
+    flex: 1;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+.update-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.update-item h3 {
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f1;
+    color: #1d2327;
+    font-size: 16px;
+    font-weight: 600;
+}
+.update-item p {
+    margin: 12px 0;
+    line-height: 1.6;
+}
+.update-available {
+    color: #d63638;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: #fcf0f1;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+.update-current {
+    color: #00a32a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: #f0f6ec;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+.update-checking {
+    color: #2271b1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: #f0f6fa;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+.update-error {
+    color: #d63638;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: #fcf0f1;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+.update-item a {
+    color: #2271b1;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.update-item a:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+#check-updates-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+#check-updates-button:hover {
+    transform: translateY(-1px);
+}
+#check-updates-button .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+.update-checking .dashicons-update,
+#check-updates-button.updating .dashicons {
+    animation: spin 1.5s linear infinite;
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.dashicons {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+} 
