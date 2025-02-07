@@ -3,7 +3,7 @@
 Plugin Name: 子比自动汉化插件
 Plugin URI: https://www.LittleSheep.cc
 Description: 一个适用于子比主题的简单的多语言翻译插件
-Version: 1.2.0
+Version: 1.2.1
 Author: LittleSheep
 Author URI: https://www.LittleSheep.cc
 License: GPLV2
@@ -234,7 +234,7 @@ function mlt_enqueue_styles() {
         'mlt-font-styles',
         plugins_url('/assets/css/font.css', __FILE__),
         array(),
-        '1.2.0'
+        '1.2.1'
     );
     
     // 前端样式
@@ -242,7 +242,7 @@ function mlt_enqueue_styles() {
         'mlt-styles',
         plugins_url('/assets/css/admin.css', __FILE__),
         array('mlt-font-styles'),
-        '1.2.0'
+        '1.2.1'
     );
 }
 add_action('wp_enqueue_scripts', 'mlt_enqueue_styles');
@@ -258,7 +258,7 @@ function mlt_admin_styles() {
             'mlt-font-styles',
             plugins_url('/assets/css/font.css', __FILE__),
             array('dashicons'),
-            '1.2.0'
+            '1.2.1'
         );
         
         // 后台样式
@@ -266,7 +266,7 @@ function mlt_admin_styles() {
             'mlt-styles',
             plugins_url('/assets/css/admin.css', __FILE__),
             array('mlt-font-styles', 'dashicons'),
-            '1.2.0'
+            '1.2.1'
         );
 
         // 更新检查样式
@@ -274,7 +274,7 @@ function mlt_admin_styles() {
             'mlt-updates-styles',
             plugins_url('/assets/css/updates.css', __FILE__),
             array('dashicons'),
-            '1.2.0'
+            '1.2.1'
         );
     }
 }

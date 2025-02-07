@@ -10,10 +10,11 @@ function mlt_updates_enqueue_styles() {
             'mlt-updates-styles', 
             plugins_url('/assets/css/updates.css', dirname(__FILE__)),
             array(),
-            '1.2.0'
+            '1.2.1'
         );
     }
 }
+
 add_action('admin_enqueue_scripts', 'mlt_updates_enqueue_styles');
 
 // 更新检查部分的回调函数
