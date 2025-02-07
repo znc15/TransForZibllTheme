@@ -3,7 +3,7 @@
 Plugin Name: 子比自动汉化插件
 Plugin URI: https://www.LittleSheep.cc
 Description: 一个适用于子比主题的简单的多语言翻译插件
-Version: 1.0.1
+Version: 1.2.0
 Author: LittleSheep
 Author URI: https://www.LittleSheep.cc
 License: GPLV2
@@ -13,6 +13,12 @@ License: GPLV2
 if (!defined('ABSPATH')) {
     exit;
 }
+
+// 包含更新检查文件
+require_once plugin_dir_path(__FILE__) . 'includes/updates.php';
+
+// 包含版本检查文件
+require_once plugin_dir_path(__FILE__) . 'includes/version.php';
 
 // 添加设置菜单
 function mlt_add_admin_menu() {
@@ -30,7 +36,6 @@ add_action('admin_menu', 'mlt_add_admin_menu');
 function mlt_settings_init() {
     register_setting('mlt_options', 'mlt_settings');
 
-    // 将"JS设置"改为"插件设置"
     add_settings_section(
         'mlt_js_section',
         '插件设置',
@@ -38,20 +43,18 @@ function mlt_settings_init() {
         'multi-language-translate'
     );
 
-    // 添加JS CDN设置
     add_settings_field(
         'js_cdn', 
-        '翻译JS CDN地址', 
+        '翻译JS路径', 
         'mlt_text_field_callback',
         'multi-language-translate',
         'mlt_js_section',
         array(
             'label_for' => 'js_cdn',
-            'description' => '设置翻译JS的CDN地址，默认使用：https://cdn.staticfile.net/translate.js/3.12.0/translate.js'
+            'description' => '设置翻译JS的路径，默认使用本地文件：/wp-content/plugins/Trans/assets/js/translate.min.js'
         )
     );
 
-    // 修改默认语言设置为文本输入
     add_settings_field(
         'default_language', 
         '默认语言代码', 
@@ -64,7 +67,6 @@ function mlt_settings_init() {
         )
     );
 
-    // 添加主图标设置
     add_settings_field(
         'main_icon',
         '主图标设置',
@@ -77,7 +79,6 @@ function mlt_settings_init() {
         )
     );
 
-    // 添加自定义语言设置部分
     add_settings_section(
         'mlt_custom_languages_section',
         '自定义语言',
@@ -85,7 +86,6 @@ function mlt_settings_init() {
         'multi-language-translate'
     );
 
-    // 添加自定义语言列表字段
     add_settings_field(
         'custom_languages',
         '自定义语言列表',
@@ -94,7 +94,13 @@ function mlt_settings_init() {
         'mlt_custom_languages_section'
     );
 
-    // 添加关于部分
+    add_settings_section(
+        'mlt_updates_section',
+        '更新检查',
+        'mlt_updates_section_callback',
+        'multi-language-translate'
+    );
+
     add_settings_section(
         'mlt_about_section',
         '关于',
@@ -119,20 +125,75 @@ function mlt_js_section_callback() {
     echo '<p>配置翻译功能的JS相关设置</p>';
 }
 
-// 文本字段回调函数
+// 修改JS CDN设置字段回调函数
 function mlt_text_field_callback($args) {
     $options = get_option('mlt_settings');
     $value = isset($options[$args['label_for']]) ? $options[$args['label_for']] : '';
-    ?>
-    <input type="text" 
-           id="<?php echo esc_attr($args['label_for']); ?>"
-           name="mlt_settings[<?php echo esc_attr($args['label_for']); ?>]"
-           value="<?php echo esc_attr($value); ?>"
-           class="regular-text"
-    >
-    <?php
-    if (isset($args['description'])) {
-        echo '<p class="description">' . esc_html($args['description']) . '</p>';
+    
+    if ($args['label_for'] === 'js_cdn') {
+        ?>
+        <div class="js-cdn-field">
+            <input type="text" 
+                   id="<?php echo esc_attr($args['label_for']); ?>"
+                   name="mlt_settings[<?php echo esc_attr($args['label_for']); ?>]"
+                   value="<?php echo esc_attr($value); ?>"
+                   class="regular-text js-url-input"
+            >
+            <button type="button" class="button upload-js-button">上传JS文件</button>
+            <?php if (isset($args['description'])): ?>
+                <p class="description"><?php echo esc_html($args['description']); ?></p>
+            <?php endif; ?>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            $('.upload-js-button').click(function(e) {
+                e.preventDefault();
+                var button = $(this);
+                var urlInput = button.siblings('.js-url-input');
+
+                var frame = wp.media({
+                    title: '选择或上传JS文件',
+                    button: {
+                        text: '使用此文件'
+                    },
+                    multiple: false,
+                    library: {
+                        type: 'application/javascript'
+                    }
+                });
+
+                frame.on('select', function() {
+                    var attachment = frame.state().get('selection').first().toJSON();
+                    urlInput.val(attachment.url).trigger('change');
+                });
+
+                frame.open();
+            });
+        });
+        </script>
+
+        <style>
+        .js-cdn-field {
+            margin-bottom: 15px;
+        }
+        .js-cdn-field input[type="text"] {
+            margin-bottom: 10px;
+        }
+        </style>
+        <?php
+    } else {
+        ?>
+        <input type="text" 
+               id="<?php echo esc_attr($args['label_for']); ?>"
+               name="mlt_settings[<?php echo esc_attr($args['label_for']); ?>]"
+               value="<?php echo esc_attr($value); ?>"
+               class="regular-text"
+        >
+        <?php
+        if (isset($args['description'])) {
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
+        }
     }
 }
 
@@ -166,58 +227,114 @@ function mlt_options_page() {
     <?php
 }
 
-// 添加CSS到头部
-function mlt_add_custom_css() {
-    ?>
-    <style>
-        .ignore:hover{color:var(--theme-color);transition:color .2s,transform .3s;}
-        #translate {display:none;}
-    </style>
-    <?php
+// 添加前端和后台样式
+function mlt_enqueue_styles() {
+    // 字体样式
+    wp_enqueue_style(
+        'mlt-font-styles',
+        plugins_url('/assets/css/font.css', __FILE__),
+        array(),
+        '1.2.0'
+    );
+    
+    // 前端样式
+    wp_enqueue_style(
+        'mlt-styles',
+        plugins_url('/assets/css/style.css', __FILE__),
+        array('mlt-font-styles'),
+        '1.2.0'
+    );
 }
-add_action('wp_head', 'mlt_add_custom_css');
+add_action('wp_enqueue_scripts', 'mlt_enqueue_styles');
 
-// 添加JavaScript到头部
+// 后台样式
+function mlt_admin_styles() {
+    if (isset($_GET['page']) && $_GET['page'] == 'multi-language-translate') {
+        // 加载Dashicons
+        wp_enqueue_style('dashicons');
+        
+        // 字体样式
+        wp_enqueue_style(
+            'mlt-font-styles',
+            plugins_url('/assets/css/font.css', __FILE__),
+            array('dashicons'),
+            '1.2.0'
+        );
+        
+        // 后台样式
+        wp_enqueue_style(
+            'mlt-styles',
+            plugins_url('/assets/css/style.css', __FILE__),
+            array('mlt-font-styles', 'dashicons'),
+            '1.2.0'
+        );
+
+        // 更新检查样式
+        wp_enqueue_style(
+            'mlt-updates-styles',
+            plugins_url('/assets/css/updates.css', __FILE__),
+            array('dashicons'),
+            '1.2.0'
+        );
+    }
+}
+add_action('admin_enqueue_scripts', 'mlt_admin_styles');
+
+// 修改添加JavaScript的函数
 function mlt_add_custom_js() {
     $options = get_option('mlt_settings');
     $js_cdn = isset($options['js_cdn']) ? $options['js_cdn'] : 'https://cdn.staticfile.net/translate.js/3.12.0/translate.js';
     $default_language = isset($options['default_language']) ? $options['default_language'] : 'chinese_simplified';
     ?>
-    <script src="<?php echo esc_url($js_cdn); ?>"></script>
     <script>
-        translate.setAutoDiscriminateLocalLanguage(); 
-        translate.language.setLocal('<?php echo esc_js($default_language); ?>'); 
-        translate.service.use('client.edge'); 
-        function executeTranslation() {
-            translate.execute();
+    // 等待DOM加载完成
+    document.addEventListener('DOMContentLoaded', function() {
+        // 创建一个标志变量，用于跟踪JS是否已加载
+        window.translationJsLoaded = false;
+        
+        // 创建加载翻译JS的函数
+        function loadTranslationJs() {
+            if (window.translationJsLoaded) return;
+            
+            var script = document.createElement('script');
+            script.src = '<?php echo esc_url($js_cdn); ?>';
+            script.onload = function() {
+                window.translationJsLoaded = true;
+                translate.setAutoDiscriminateLocalLanguage();
+                translate.language.setLocal('<?php echo esc_js($default_language); ?>');
+                translate.service.use('client.edge');
+                executeTranslation();
+            };
+            document.head.appendChild(script);
         }
-        executeTranslation();
-        jQuery(document).ajaxComplete(function() {
-            executeTranslation();
+        
+        // 监听翻译按钮的悬停和点击事件
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.closest('.toggle-radius') || e.target.closest('.btn-newadd')) {
+                loadTranslationJs();
+            }
         });
+        
+        // 执行翻译的函数
+        function executeTranslation() {
+            if (window.translate) {
+                translate.execute();
+            }
+        }
+        
+        // AJAX完成后重新执行翻译
+        if (window.jQuery) {
+            jQuery(document).ajaxComplete(function() {
+                if (window.translationJsLoaded) {
+                    executeTranslation();
+                }
+            });
+        }
+    });
     </script>
     <?php
 }
 add_action('wp_head', 'mlt_add_custom_js');
-
-// 添加后台样式
-function mlt_admin_styles() {
-    if (isset($_GET['page']) && $_GET['page'] == 'multi-language-translate') {
-        ?>
-        <style>
-            .wrap { max-width: 900px; margin: 20px auto; }
-            .form-table { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-            .form-table th { padding: 20px; }
-            .form-table td { padding: 15px 20px; }
-            h2 { color: #23282d; font-size: 1.5em; margin: 1.5em 0 1em; padding-bottom: 10px; border-bottom: 2px solid #eee; }
-            .regular-text { width: 100%; max-width: 400px; }
-            .description { color: #666; font-style: italic; margin-top: 5px; }
-            .submit { margin-top: 20px; }
-        </style>
-        <?php
-    }
-}
-add_action('admin_head', 'mlt_admin_styles');
 
 // 修改翻译按钮输出函数
 function custom_modify_radius_button($original_content, $user_id) {
@@ -307,7 +424,7 @@ function mlt_activate() {
     $plugin_dir = 'Trans';
     
     $default_settings = array(
-        'js_cdn' => 'https://cdn.staticfile.net/translate.js/3.12.0/translate.js',
+        'js_cdn' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/js/translate.min.js',
         'default_language' => 'chinese_simplified', // 默认语言代码
         'main_icon' => $site_url . '/wp-content/plugins/' . $plugin_dir . '/assets/svg/translate.svg',
         'custom_languages' => array(
@@ -341,7 +458,7 @@ register_activation_hook(__FILE__, 'mlt_activate');
 // 停用插件时的操作
 function mlt_deactivate() {
     // 可以选择是否删除设置
-    // delete_option('mlt_settings');
+    delete_option('mlt_settings');
 }
 register_deactivation_hook(__FILE__, 'mlt_deactivate');
 
@@ -480,93 +597,16 @@ function mlt_custom_languages_callback() {
     });
     </script>
 
-    <style>
-    .custom-language-item {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-
-    .language-field {
-        margin-bottom: 15px;
-    }
-
-    .language-field label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 600;
-    }
-
-    .language-field input[type="text"] {
-        width: 100%;
-        max-width: 400px;
-    }
-
-    .svg-upload-field {
-        margin-bottom: 15px;
-    }
-
-    .svg-input-group {
-        margin-top: 5px;
-    }
-
-    .svg-input-group input {
-        width: 100%;
-        max-width: 400px;
-        margin-bottom: 10px;
-    }
-
-    .svg-preview {
-        margin-top: 10px;
-        width: 100%;
-    }
-
-    .svg-preview img {
-        max-width: 50px;
-        height: auto;
-        border: 1px solid #ddd;
-        padding: 5px;
-        border-radius: 4px;
-    }
-
-    .description {
-        color: #666;
-        font-style: italic;
-        margin: 5px 0 0;
-        font-size: 13px;
-    }
-
-    #add-custom-language {
-        margin-top: 10px;
-    }
-
-    .remove-language {
-        margin-top: 10px;
-    }
-
-    .button-link-delete {
-        color: #dc3232;
-    }
-
-    .button-link-delete:hover {
-        color: #dc3232;
-        border-color: #dc3232;
-    }
-    </style>
     <?php
 }
 
 // 添加主图标设置回调函数
 function mlt_main_icon_callback($args) {
     $options = get_option('mlt_settings');
-    // 获取网站URL和插件目录
+
     $site_url = get_site_url();
     $default_icon = $site_url . '/wp-content/plugins/Trans/assets/svg/main.svg';
-    
-    // 如果没有设置值，使用默认图标
+
     $main_icon = isset($options[$args['label_for']]) && !empty($options[$args['label_for']]) 
         ? $options[$args['label_for']] 
         : $default_icon;
@@ -623,108 +663,25 @@ function mlt_main_icon_callback($args) {
     });
     </script>
 
-    <style>
-    .main-icon-field {
-        margin-bottom: 15px;
-    }
-    .main-icon-field .svg-input-group {
-        margin-top: 5px;
-    }
-    .main-icon-field .svg-url-input {
-        width: 100%;
-        max-width: 400px;
-        margin-bottom: 10px;
-    }
-    .main-icon-field .svg-preview {
-        margin-top: 10px;
-    }
-    .main-icon-field .svg-preview img {
-        max-width: 50px;
-        height: auto;
-        border: 1px solid #ddd;
-        padding: 5px;
-        border-radius: 4px;
-    }
-    </style>
     <?php
 }
 
-// 添加关于部分的回调函数
+// 修改关于部分的回调函数，移除更新检查相关内容
 function mlt_about_section_callback() {
-    // 获取当前插件版本
-    $current_version = '1.0.1';
-    
-    // 获取GitHub最新版本
-    $github_version = get_github_latest_version();
-    
-    // 准备更新提示信息
-    $update_message = version_compare($github_version, $current_version, '>') 
-        ? '<p class="update-available"><strong>更新：</strong> 发现新版本 ' . esc_html($github_version) . '，请前往 <a href="https://github.com/znc15/TransForZibllTheme/releases/" target="_blank">GitHub</a> 下载</p>'
-        : '<p class="update-current"><strong>更新：</strong> 当前已是最新版本</p>';
     ?>
     <div class="about-section">
-        <p><strong>版本号：</strong> <?php echo esc_html($current_version); ?></p>
         <p><strong>作者：</strong> <a href="https://www.LittleSheep.cc" target="_blank">LittleSheep</a></p>
         <p><strong>引用：</strong> 本插件使用了 <a href="https://github.com/xnx3/translate" target="_blank">translate.js</a> 提供的翻译功能</p>
         <p><strong>基于：</strong> https://www.zibll.com/forum-post/29011.html 修改而成</p>
-        <?php echo wp_kses_post($update_message); ?>
     </div>
 
-    <style>
-    .about-section {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .about-section p {
-        margin: 10px 0;
-        color: #666;
-    }
-    .about-section a {
-        color: #2271b1;
-        text-decoration: none;
-    }
-    .about-section a:hover {
-        color: #135e96;
-        text-decoration: underline;
-    }
-    .update-available {
-        color: #d63638 !important;
-    }
-    .update-current {
-        color: #00a32a !important;
-    }
-    </style>
     <?php
 }
 
-// 获取GitHub最新版本号
-function get_github_latest_version() {
-    $cache_key = 'mlt_github_version';
-    $cached_version = get_transient($cache_key);
-    
-    if (false !== $cached_version) {
-        return $cached_version;
+// 添加媒体上传脚本
+function mlt_admin_enqueue_scripts($hook) {
+    if ('settings_page_multi-language-translate' === $hook) {
+        wp_enqueue_media();
     }
-    
-    $response = wp_remote_get('https://api.github.com/repos/znc15/TransForZibllTheme/releases/latest');
-    
-    if (is_wp_error($response)) {
-        return '1.0.1'; // 如果请求失败，返回当前版本
-    }
-    
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body);
-    
-    if (empty($data->tag_name)) {
-        return '1.0.1';
-    }
-    
-    $version = ltrim($data->tag_name, 'v');
-    
-    // 缓存版本号12小时
-    set_transient($cache_key, $version, 12 * HOUR_IN_SECONDS);
-    
-    return $version;
 }
+add_action('admin_enqueue_scripts', 'mlt_admin_enqueue_scripts');
