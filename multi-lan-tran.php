@@ -315,6 +315,13 @@ function mlt_add_custom_js() {
             }
         });
         
+        // 添加点击事件监听
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.toggle-radius') || e.target.closest('.btn-newadd')) {
+                loadTranslationJs();
+            }
+        });
+        
         // 执行翻译的函数
         function executeTranslation() {
             if (window.translate) {
