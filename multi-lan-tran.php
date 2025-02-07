@@ -240,7 +240,7 @@ function mlt_enqueue_styles() {
     // 前端样式
     wp_enqueue_style(
         'mlt-styles',
-        plugins_url('/assets/css/style.css', __FILE__),
+        plugins_url('/assets/css/admin.css', __FILE__),
         array('mlt-font-styles'),
         '1.2.0'
     );
@@ -264,7 +264,7 @@ function mlt_admin_styles() {
         // 后台样式
         wp_enqueue_style(
             'mlt-styles',
-            plugins_url('/assets/css/style.css', __FILE__),
+            plugins_url('/assets/css/admin.css', __FILE__),
             array('mlt-font-styles', 'dashicons'),
             '1.2.0'
         );

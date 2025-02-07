@@ -30,7 +30,7 @@
     padding: 20px 25px;
 }
 
-h2 {
+.wp-admin h2 {
     color: #1d2327;
     font-size: 1.6em;
     margin: 1.8em 0 1.2em;
@@ -162,8 +162,8 @@ h2 {
     display: none;
 }
 
-/* 表单分组样式 */
-.form-group {
+/* 表单分组样式 - 仅限管理页面 */
+.wp-admin .form-group {
     margin-bottom: 20px;
     padding: 20px;
     background: #f8f9fa;
