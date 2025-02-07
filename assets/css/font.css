@@ -450,7 +450,7 @@
 .form-table th,
 .form-table td,
 .notice p,
-.wp-admin * {
+* {
   font-family: var(--harmony-font);
 }
 
